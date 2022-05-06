@@ -36,14 +36,17 @@ def predict():
     # ensure an image was properly uploaded to our endpoint
     if flask.request.method == "POST":
         request_json = flask.request.get_json()
-
-        # for col, val in request_json.items():
-        #     print(f"col: {col} val: {val}")  # pd.DataFrame(request_json.items(), columns=total_columns_list))
-        # print(pd.DataFrame([request_json]))
+        cart = {}
+        
+        if request_json["cart"]:
+            cart = request_json['cart']
+        if cart['age'] > 110:
+            cart['age'] = cart['age']//365
 
         logger.info(f'{dt} Data: {request_json}')
+        data['cart'] = cart
         try:
-            predictions = model.predict_proba(pd.DataFrame([request_json]))
+            predictions = model.predict_proba(pd.DataFrame(cart, index=[71001]))
         except AttributeError as e:
             logger.warning(f'{dt} Exception: {str(e)}')
             data['predictions'] = str(e)
